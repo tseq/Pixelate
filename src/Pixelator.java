@@ -41,6 +41,8 @@ public class Pixelator {
             case 4:
                 return PictureFilter.linearDifferenceFilter3(picture);
             case 5:
+                return PictureFilter.linearDifferenceFilter4(picture);
+            case 6:
                 return PictureFilter.gridDifferenceFilter(picture);
             default:
                 return null;
@@ -57,7 +59,7 @@ public class Pixelator {
     }
 
     public static void main(String[] args) throws IOException {
-        Pixelator pixelator = new Pixelator(RED_APPLE);
+        Pixelator pixelator = new Pixelator(TINY_CAT);
 
         BufferedImage originalImage = pixelator.getImage();
         BufferedImage blurImage = pixelator.filter(0);
@@ -65,7 +67,8 @@ public class Pixelator {
         BufferedImage linearDiffImage = pixelator.filter(2);
         BufferedImage linearDiff2Image = pixelator.filter(3);
         BufferedImage linearDiff3Image = pixelator.filter(4);
-        BufferedImage gridDiffImage = pixelator.filter(5);
+        BufferedImage linearDiff4Image = pixelator.filter(5);
+        BufferedImage gridDiffImage = pixelator.filter(6);
 
         JPanel container = new JPanel(new GridLayout(2, 3));
 
@@ -81,6 +84,8 @@ public class Pixelator {
         setText(linearDiff2Icon, "<html>Linear Difference<br>Filter 2</html>");
         JLabel linearDiff3Icon = new JLabel(new ImageIcon(linearDiff3Image));
         setText(linearDiff3Icon, "<html>Linear Difference<br>Filter 3</html>");
+        JLabel linearDiff4Icon = new JLabel(new ImageIcon(linearDiff4Image));
+        setText(linearDiff4Icon, "<html>Linear Difference<br>Filter 4</html>");
         JLabel gridDiffIcon = new JLabel(new ImageIcon(gridDiffImage));
         setText(gridDiffIcon, "<html>Grid-Difference<br>Filter</html>");
 
@@ -90,6 +95,7 @@ public class Pixelator {
         container.add(linearDiffIcon);
         container.add(linearDiff2Icon);
         container.add(linearDiff3Icon);
+        container.add(linearDiff4Icon);
         container.add(gridDiffIcon);
 
         JFrame frame = new JFrame("Pixelator");

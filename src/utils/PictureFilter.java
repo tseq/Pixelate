@@ -68,6 +68,121 @@ public class PictureFilter {
         return (new Picture(result)).getImage();
     }
 
+    /**
+     * TODO: CLEAN THIS METHOD UP!
+     * @param picture
+     * @return
+     */
+    public static BufferedImage linearDifferenceFilter4(Picture picture) {
+        int width = picture.getWidth();
+        int height = picture.getHeight();
+
+        Pixel[][] original = picture.getPixels();
+        Pixel[][] result = new Pixel[height][width];
+
+        // Initialize palette
+        Pixel currentColor = original[0][0];
+        Palette palette = new Palette();
+        palette.add(currentColor);
+
+        // Iterate through pixel matrix in spiral motion
+        int firstCol = 0, lastCol = width - 1;
+        int firstRow = 0, lastRow = height - 1;
+
+        while (firstCol <= lastCol && firstRow <= lastRow) {
+            // Case 1: Right - Neighbors: 3 Northern, 1 West (current)
+            for (int i = firstCol; i <= lastCol; i++) {
+                ArrayList<Pixel> colors = new ArrayList<>();
+                // Check neighbors
+                for (int x = Math.max(0, i - 1); firstRow != 0 && x < Math.min(width, i + 2); x++) {
+                    colors.add(result[firstRow - 1][x]);
+                }
+                colors.add(currentColor);
+                currentColor = Palette.nearestColor(original[firstRow][i], colors);
+                // Check palette
+                if (currentColor == null) {
+                    if (palette.exists(original[firstRow][i])) {
+                        currentColor = palette.getColor();
+                    } else {
+                        palette.add(original[firstRow][i]);
+                        currentColor = original[firstRow][i];
+                    }
+                }
+                result[firstRow][i] = currentColor;
+            }
+            firstRow++;
+
+            // Case 2: Down - Neighbors: 3 Eastern, 1 North
+            for (int i = firstRow; i <= lastRow; i++) {
+                ArrayList<Pixel> colors = new ArrayList<>();
+                // Check neighbors
+                for (int x = Math.max(0, i - 1); lastCol != width - 1 && x < Math.min(height, i + 2); x++) {
+                    colors.add(result[x][lastCol + 1]);
+                }
+                colors.add(currentColor);
+                currentColor = Palette.nearestColor(original[i][lastCol], colors);
+                // Check palette
+                if (currentColor == null) {
+                    if (palette.exists(original[i][lastCol])) {
+                        currentColor = palette.getColor();
+                    } else {
+                        palette.add(original[i][lastCol]);
+                        currentColor = original[i][lastCol];
+                    }
+                }
+                result[i][lastCol] = currentColor;
+            }
+            lastCol--;
+
+            // Case 3: Left - Neighbors: 3 Southern, 1 East
+            for (int i = lastCol; i >= firstCol; i--) {
+                ArrayList<Pixel> colors = new ArrayList<>();
+                // Check neighbors
+                for (int x = Math.max(0, i - 1); lastRow != height - 1 && x < Math.min(width, i + 2); x++) {
+                    colors.add(result[lastRow + 1][x]);
+                }
+                colors.add(currentColor);
+                currentColor = Palette.nearestColor(original[lastRow][i], colors);
+                // Check palette
+                if (currentColor == null) {
+                    if (palette.exists(original[lastRow][i])) {
+                        currentColor = palette.getColor();
+                    } else {
+                        palette.add(original[lastRow][i]);
+                        currentColor = original[lastRow][i];
+                    }
+                }
+                result[lastRow][i] = currentColor;
+            }
+            lastRow--;
+
+            // Case 4: Up - Neighbors: 3 Western, 1 South
+            for (int i = lastRow; i >= firstRow; i--) {
+                ArrayList<Pixel> colors = new ArrayList<>();
+                // Check neighbors
+                for (int x = Math.max(0, i - 1); firstCol != 0 && x < Math.min(height, i + 2); x++) {
+                    colors.add(result[x][firstCol - 1]);
+                }
+                colors.add(currentColor);
+                currentColor = Palette.nearestColor(original[i][firstCol], colors);
+                // Check palette
+                if (currentColor == null) {
+                    if (palette.exists(original[i][firstCol])) {
+                        currentColor = palette.getColor();
+                    } else {
+                        palette.add(original[i][firstCol]);
+                        currentColor = original[i][firstCol];
+                    }
+                }
+                result[i][firstCol] = currentColor;
+            }
+            firstCol++;
+
+        }
+
+        return (new Picture(result)).getImage();
+    }
+
     public static BufferedImage linearDifferenceFilter3(Picture picture) {
         int width = picture.getWidth();
         int height = picture.getHeight();
