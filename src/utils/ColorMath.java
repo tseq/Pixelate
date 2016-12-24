@@ -1,7 +1,8 @@
 package utils;
 
 /**
- * Created by Tse Qin on 22/12/2016.
+ * ColorMath class. Contains static methods to perform calculations for colors.
+ * TODO: Migrate from using colorDifferenceScale --> colorDifferenceVal. Use valueToScale().
  */
 public class ColorMath {
     // Reference white values for XYZ to Lab conversion.
@@ -9,7 +10,14 @@ public class ColorMath {
     private final static double REF_Y = 100.000;
     private final static double REF_Z = 108.883;
 
-    public static PerceptionScale colorDifference(double[] rgb1, double[] rgb2) {
+    /**
+     * Compute color differences in terms of perception scale.
+     *
+     * @param rgb1 first color
+     * @param rgb2 second color
+     * @return difference translated to scale
+     */
+    public static PerceptionScale colorDifferenceScale(double[] rgb1, double[] rgb2) {
         double diff = cie76(rgb1, rgb2);
         if (diff < 1) {
             return PerceptionScale.LEVEL_1;
@@ -22,6 +30,37 @@ public class ColorMath {
         } else {
             return PerceptionScale.LEVEL_5;
         }
+    }
+
+    /**
+     * Convert difference in value to scale.
+     *
+     * @param diff difference in value
+     * @return difference translated to scale
+     */
+    public static PerceptionScale valueToScale(double diff) {
+        if (diff < 1) {
+            return PerceptionScale.LEVEL_1;
+        } else if (diff < 2) {
+            return PerceptionScale.LEVEL_2;
+        } else if (diff < 11) {
+            return PerceptionScale.LEVEL_3;
+        } else if (diff < 59) {
+            return PerceptionScale.LEVEL_4;
+        } else {
+            return PerceptionScale.LEVEL_5;
+        }
+    }
+
+    /**
+     * Compute color differences in terms of double.
+     *
+     * @param rgb1 first color
+     * @param rgb2 second color
+     * @return difference between first and second color
+     */
+    public static double colorDifferenceVal(double[] rgb1, double[] rgb2) {
+        return cie76(rgb1, rgb2);
     }
 
     /**
@@ -83,7 +122,7 @@ public class ColorMath {
 
     /**
      * Convert RGB to XYZ color space.
-     * Source: http://www.easyrgb.com/index.php?X=MATH&H=07#text7
+     * Reference: http://www.easyrgb.com/index.php?X=MATH&H=07#text7
      *
      * @param r red value
      * @param g green value
@@ -104,7 +143,7 @@ public class ColorMath {
 
     /**
      * Convert XYZ to Lab color space.
-     * Source: http://www.easyrgb.com/index.php?X=MATH&H=07#text7
+     * Reference: http://www.easyrgb.com/index.php?X=MATH&H=07#text7
      *
      * @param x x value
      * @param y y value

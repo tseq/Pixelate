@@ -8,18 +8,28 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * Created by Tse Qin on 21/12/2016.
+ * Picture class. Holds the matrix of all the pixels and enables translation between pixel matrix and
+ * BufferedImage.
  */
 public class Picture {
     private Pixel pixels[][];
     private String imgSrc;
-    private boolean hasAlphaChannel;
 
+    /**
+     * Constructor.
+     *
+     * @param imgSrc path of image to be parsed
+     */
     public Picture(String imgSrc) {
         this.imgSrc = imgSrc;
         parseImg(imgSrc);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param pixels pixel matrix to be parsed
+     */
     public Picture(Pixel[][] pixels) {
         this.pixels = pixels;
     }
@@ -51,9 +61,9 @@ public class Picture {
         final byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
         final int width = image.getWidth();
         final int height = image.getHeight();
-        hasAlphaChannel = image.getAlphaRaster() != null;
+        boolean hasAlphaChannel = image.getAlphaRaster() != null;
 
-        return getPixelMatrix(image, hasAlphaChannel, data, width, height);
+        return getPixelMatrix(hasAlphaChannel, data, width, height);
     }
 
     /**
@@ -65,7 +75,7 @@ public class Picture {
      * @param imgHeight the height of the image
      * @return the Pixel matrix of the image
      */
-    private Pixel[][] getPixelMatrix(BufferedImage image, boolean hasAlpha, byte[] data, int imgWidth, int imgHeight) {
+    private Pixel[][] getPixelMatrix(boolean hasAlpha, byte[] data, int imgWidth, int imgHeight) {
         Pixel result[][] = new Pixel[imgHeight][imgWidth];
         final int pixelLength = hasAlpha ? 4 : 3;
 

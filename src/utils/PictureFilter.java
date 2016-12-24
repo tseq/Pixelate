@@ -8,10 +8,16 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /**
- * Created by Tse Qin on 21/12/2016.
+ * PictureFilter class. Contains implementations of all filters. TODO: Code cleaning
  */
 public class PictureFilter {
 
+    /**
+     * Combines the pros of grid algorithm (averaging, mosaic) and color difference algorithm (palette) together.
+     *
+     * @param picture Picture to be transformed
+     * @return transformed picture
+     */
     public static BufferedImage gridDifferenceFilter(Picture picture) {
         int width = picture.getWidth();
         int height = picture.getHeight();
@@ -42,7 +48,7 @@ public class PictureFilter {
                     palette.add(averageColor);
                     currentColor = averageColor;
                 }
-                if (!Pixel.colorDifference(currentColor, averageColor).isSimilar()) {
+                if (!Pixel.colorDifferenceScale(currentColor, averageColor).isSimilar()) {
                     if (palette.exists(averageColor)) {
                         currentColor = palette.getColor();
                     } else {
@@ -56,6 +62,47 @@ public class PictureFilter {
                     for (int y = j; y < Math.min(width, j + 4); y++)
                         result[x][y] = currentColor;
                 }
+            }
+        }
+
+        return (new Picture(result)).getImage();
+    }
+
+    public static BufferedImage linearDifferenceFilter3(Picture picture) {
+        int width = picture.getWidth();
+        int height = picture.getHeight();
+
+        Pixel[][] original = picture.getPixels();
+        Pixel[][] result = new Pixel[height][width];
+
+        // Initialize palette
+        Pixel currentColor = original[0][0];
+        Palette palette = new Palette();
+        palette.add(currentColor);
+
+        // Iterate through pixel matrix
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (!Pixel.colorDifferenceScale(currentColor, original[i][j]).isSimilar()) {
+                    // Check 3 neighbors above current pixel
+                    ArrayList<Pixel> colors = new ArrayList<>();
+                    colors.add(currentColor);
+                    for (int x = Math.max(0, j - 1); i != 0 && x < Math.min(width, j + 2); x++) {
+                        colors.add(result[i - 1][x]);
+                    }
+                    currentColor = Palette.nearestColor(original[i][j], colors);
+
+                    // Check palette
+                    if (currentColor == null) {
+                        if (palette.exists(original[i][j])) {
+                            currentColor = palette.getColor();
+                        } else {
+                            palette.add(original[i][j]);
+                            currentColor = original[i][j];
+                        }
+                    }
+                }
+                result[i][j] = currentColor;
             }
         }
 
@@ -84,11 +131,11 @@ public class PictureFilter {
         // Iterate through pixel matrix
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (!Pixel.colorDifference(currentColor, original[i][j]).isSimilar()) {
+                if (!Pixel.colorDifferenceScale(currentColor, original[i][j]).isSimilar()) {
                     // Check 3 neighbors above current pixel
                     boolean found = false;
                     for (int x = Math.max(0, j - 1); i != 0 && x < Math.min(width, j + 2); x++) {
-                        if (Pixel.colorDifference(original[i][j], result[i - 1][x]).isSimilar()) {
+                        if (Pixel.colorDifferenceScale(original[i][j], result[i - 1][x]).isSimilar()) {
                             currentColor = result[i - 1][x];
                             found = true;
                             break;
@@ -132,7 +179,7 @@ public class PictureFilter {
         // Iterate through pixel matrix
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (Pixel.colorDifference(currentColor, original[i][j]).greaterThan(PerceptionScale.LEVEL_3)) {
+                if (Pixel.colorDifferenceScale(currentColor, original[i][j]).greaterThan(PerceptionScale.LEVEL_3)) {
                     // Check palette
                     if (palette.exists(original[i][j])) {
                         currentColor = palette.getColor();

@@ -39,6 +39,8 @@ public class Pixelator {
             case 3:
                 return PictureFilter.linearDifferenceFilter2(picture);
             case 4:
+                return PictureFilter.linearDifferenceFilter3(picture);
+            case 5:
                 return PictureFilter.gridDifferenceFilter(picture);
             default:
                 return null;
@@ -62,9 +64,10 @@ public class Pixelator {
         BufferedImage mosaicImage = pixelator.filter(1);
         BufferedImage linearDiffImage = pixelator.filter(2);
         BufferedImage linearDiff2Image = pixelator.filter(3);
-        BufferedImage gridDiffImage = pixelator.filter(4);
+        BufferedImage linearDiff3Image = pixelator.filter(4);
+        BufferedImage gridDiffImage = pixelator.filter(5);
 
-        JPanel container = new JPanel(new GridLayout(2, 3));
+        JPanel container = new JPanel(new GridLayout(3, 3));
 
         JLabel originalIcon = new JLabel(new ImageIcon(originalImage));
         setText(originalIcon, "Original Image");
@@ -76,6 +79,8 @@ public class Pixelator {
         setText(linearDiffIcon, "<html>Linear Difference<br>Filter</html>");
         JLabel linearDiff2Icon = new JLabel(new ImageIcon(linearDiff2Image));
         setText(linearDiff2Icon, "<html>Linear Difference<br>Filter 2</html>");
+        JLabel linearDiff3Icon = new JLabel(new ImageIcon(linearDiff3Image));
+        setText(linearDiff3Icon, "<html>Linear Difference<br>Filter 3</html>");
         JLabel gridDiffIcon = new JLabel(new ImageIcon(gridDiffImage));
         setText(gridDiffIcon, "<html>Grid-Difference<br>Filter</html>");
 
@@ -84,6 +89,7 @@ public class Pixelator {
         container.add(mosaicIcon);
         container.add(linearDiffIcon);
         container.add(linearDiff2Icon);
+        container.add(linearDiff3Icon);
         container.add(gridDiffIcon);
 
         JFrame frame = new JFrame("Pixelator");

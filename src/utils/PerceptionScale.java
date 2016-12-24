@@ -14,19 +14,42 @@ public enum PerceptionScale {
     private final double low;
     private final double high;
 
+    /**
+     * Constructor. Sets the bounds of the PerceptionScale object.
+     *
+     * @param low  lower bound
+     * @param high upper bound
+     */
     PerceptionScale(double low, double high) {
         this.low = low;
         this.high = high;
     }
 
+    /**
+     * Checks if current PerceptionScale is < than the other.
+     *
+     * @param p the other PerceptionScale to be compared against
+     * @return true if this < p, false otherwise
+     */
     public boolean lessThan(PerceptionScale p) {
         return high < p.low;
     }
 
+    /**
+     * Checks if current PerceptionScale is > than the other.
+     *
+     * @param p the other PerceptionScale to be compared against
+     * @return true if this > p, false otherwise
+     */
     public boolean greaterThan(PerceptionScale p) {
         return low > p.high;
     }
 
+    /**
+     * Checks if two colors are similar based on the threshold: LEVEL_4
+     *
+     * @return true if two colors are similar (the PerceptionScale of the difference < LEVEL_4), false otherwise
+     */
     public boolean isSimilar() {
         return lessThan(LEVEL_4);
     }
