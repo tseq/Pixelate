@@ -67,7 +67,7 @@ public class Pixelator {
         BufferedImage linearDiff3Image = pixelator.filter(4);
         BufferedImage gridDiffImage = pixelator.filter(5);
 
-        JPanel container = new JPanel(new GridLayout(3, 3));
+        JPanel container = new JPanel(new GridLayout(2, 3));
 
         JLabel originalIcon = new JLabel(new ImageIcon(originalImage));
         setText(originalIcon, "Original Image");
@@ -85,8 +85,8 @@ public class Pixelator {
         setText(gridDiffIcon, "<html>Grid-Difference<br>Filter</html>");
 
         container.add(originalIcon);
-        container.add(blurIcon);
-        container.add(mosaicIcon);
+//        container.add(blurIcon);
+//        container.add(mosaicIcon);
         container.add(linearDiffIcon);
         container.add(linearDiff2Icon);
         container.add(linearDiff3Icon);

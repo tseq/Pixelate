@@ -179,7 +179,7 @@ public class PictureFilter {
         // Iterate through pixel matrix
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (Pixel.colorDifferenceScale(currentColor, original[i][j]).greaterThan(PerceptionScale.LEVEL_3)) {
+                if (!Pixel.colorDifferenceScale(currentColor, original[i][j]).isSimilar()) {
                     // Check palette
                     if (palette.exists(original[i][j])) {
                         currentColor = palette.getColor();

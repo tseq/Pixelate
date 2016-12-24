@@ -37,13 +37,17 @@ public class Palette {
      * @return true if the color exists, false otherwise.
      */
     public boolean exists(Pixel color) {
-        for (Pixel p : palette) {
+        tempColor = nearestColor(color, palette);
+        return tempColor != null;
+
+        /* Retired: This code picks the first color that is similar. */
+        /* for (Pixel p : palette) {
             if (p.colorDifferenceScale(color).isSimilar()) {
                 tempColor = p;
                 return true;
             }
         }
-        return false;
+        return false; */
     }
 
     /**
@@ -57,6 +61,15 @@ public class Palette {
     }
 
     /**
+     * Get size of the palette (number of colors stored).
+     *
+     * @return size of the palette.
+     */
+    public int getSize() {
+        return palette.size();
+    }
+
+    /**
      * Obtain the nearest color in an array of colors.
      * @param currentColor color benchmark
      * @param colors array of colors to be compared with the benchmark
@@ -64,7 +77,7 @@ public class Palette {
      */
     public static Pixel nearestColor(Pixel currentColor, Pixel colors[]) {
         double min = currentColor.colorDifferenceVal(colors[0]);
-        Pixel nearest = null;
+        Pixel nearest = colors[0];
 
         for (int i = 1; i < colors.length; i++) {
             double diff = currentColor.colorDifferenceVal(colors[i]);
@@ -74,10 +87,9 @@ public class Palette {
             }
         }
 
-        if (nearest == null || !ColorMath.valueToScale(min).isSimilar())
-            return null;
-
-        return nearest;
+        if (ColorMath.valueToScale(min).isSimilar())
+            return nearest;
+        return null;
     }
 
     public static Pixel nearestColor(Pixel currentColor, List<Pixel> colors) {
