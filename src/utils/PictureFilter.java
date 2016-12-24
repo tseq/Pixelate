@@ -5,6 +5,7 @@ import models.Picture;
 import models.Pixel;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 /**
  * Created by Tse Qin on 21/12/2016.
@@ -22,15 +23,39 @@ public class PictureFilter {
         Palette palette = new Palette();
         Pixel currentColor = null;
 
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
+        // Iterate through pixel matrix
+        for (int i = 0; i < height; i += 4) {
+            for (int j = 0; j < width; j += 4) {
 
-                for (int x = i; x < Math.min(height, i + 4); x++) {
-                    for (int y = j; y < Math.min(width, j + 4); y++) {
+                // Obtain average of 4 inner colors
+                ArrayList<Pixel> colors = new ArrayList<>();
+                Pixel averageColor;
+                for (int x = Math.min(i + 1, height); x < Math.min(i + 3, height); x++) {
+                    for (int y = Math.min(j + 1, width); y < Math.min(j + 3, width); y++) {
+                        colors.add(original[x][y]);
+                    }
+                }
+                averageColor = colors.size() == 0 ? original[i][j] : Pixel.average(colors);
 
+                // Obtain current color
+                if (currentColor == null) {
+                    palette.add(averageColor);
+                    currentColor = averageColor;
+                }
+                if (!Pixel.colorDifference(currentColor, averageColor).isSimilar()) {
+                    if (palette.exists(averageColor)) {
+                        currentColor = palette.getColor();
+                    } else {
+                        palette.add(averageColor);
+                        currentColor = averageColor;
                     }
                 }
 
+                // Paint the 4x4 grid
+                for (int x = i; x < Math.min(height, i + 4); x++) {
+                    for (int y = j; y < Math.min(width, j + 4); y++)
+                        result[x][y] = currentColor;
+                }
             }
         }
 

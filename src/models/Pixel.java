@@ -3,6 +3,8 @@ package models;
 import utils.ColorMath;
 import utils.PerceptionScale;
 
+import java.util.List;
+
 /**
  * Pixel class. Enables calculation of RGB values.
  */
@@ -102,6 +104,10 @@ public class Pixel {
 
         newPixel.computeArgb();
         return newPixel;
+    }
+
+    public static Pixel average(List<Pixel> pixels) {
+        return average(pixels.toArray(new Pixel[pixels.size()]));
     }
 
     public static PerceptionScale colorDifference(Pixel p1, Pixel p2) {
