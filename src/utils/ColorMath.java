@@ -1,12 +1,66 @@
 package utils;
 
+import java.awt.*;
+
 /**
  * ColorMath class. Contains static methods to perform calculations for colors.
  * TODO: Migrate from using colorDifferenceScale --> colorDifferenceVal. Use valueToScale().
+ * TODO: Change rgb arrays to int instead of double
  */
 public class ColorMath {
     // Reference white values for XYZ to Lab conversion.
     private final static double REF_X = 95.047, REF_Y = 100.000, REF_Z = 108.883;
+
+    public enum ColorSpace {
+        RGB, HSB
+    }
+
+    public static int changeContrast(int[] rgb, int contrast) {
+        double factor = (259.0 * (contrast + 255)) / (255.0 * (259 - contrast));
+        int newRed = (int) truncate((factor * rgb[0] - 128) + 128, ColorSpace.RGB);
+        int newGreen = (int) truncate((factor * rgb[1] - 128) + 128, ColorSpace.RGB);
+        int newBlue = (int) truncate((factor * rgb[2]  - 128) + 128, ColorSpace.RGB);
+        return new Color(newRed, newGreen, newBlue).getRGB();
+    }
+
+    /**
+     * Change saturation of the rgb color.
+     *
+     * @param rgb color to change
+     * @param change change made to color
+     * @return rgb value of color
+     */
+    public static int changeSaturation(int[] rgb, float change) {
+        float[] hsb = Color.RGBtoHSB(rgb[0], rgb[1], rgb[2], null);
+        return Color.HSBtoRGB(hsb[0], (float) truncate(hsb[1] * change, ColorSpace.HSB), hsb[2]);
+    }
+
+    /**
+     * Truncate color space components.
+     *
+     * @param component value of component
+     * @param colorSpace color space of component
+     * @return truncated value
+     */
+    public static double truncate(double component, ColorSpace colorSpace) {
+        int max, min = 0;
+        switch(colorSpace) {
+            case RGB:
+                max = 255;
+                break;
+            case HSB:
+                max = 1;
+                break;
+            default:
+                max = 0;
+        }
+
+        if (component > max)
+            return max;
+        if (component < min)
+            return min;
+        return component;
+    }
 
     /**
      * Compute color differences in terms of perception scale.

@@ -21,6 +21,7 @@ public class Pixelator {
     private static final String PIZZA_SLICE = FOLDER + "pizza_slice.JPEG";
     private static final String SMALL_PIZZA = FOLDER + "small_pizza.png";
     private static final String SQUARE_PIZZA = FOLDER + "square_pizza.jpg";
+    private static final String THIN_TREE = FOLDER + "thin_tree.jpg";
 
     private Picture picture;
 
@@ -30,12 +31,18 @@ public class Pixelator {
 
     private BufferedImage filter(int filterChoice) {
         switch(filterChoice) {
+            case -2:
+                PictureFilter.increaseContrast(picture);
+                return null;
+            case -1:
+                PictureFilter.increaseSaturation(picture);
+                return null;
             case 0:
                 return PictureFilter.gridWeightFilter(picture, 0, 0);
             case 1:
                 return PictureFilter.gridSpaceFilter(picture);
             case 2:
-                return PictureFilter.lienarDifferenceFilter(picture);
+                return PictureFilter.linearDifferenceFilter(picture);
             case 3:
                 return PictureFilter.linearDifferenceFilter2(picture);
             case 4:
@@ -59,9 +66,13 @@ public class Pixelator {
     }
 
     public static void main(String[] args) throws IOException {
-        Pixelator pixelator = new Pixelator(TINY_CAT);
+        Pixelator pixelator = new Pixelator(RED_APPLE);
 
         BufferedImage originalImage = pixelator.getImage();
+        pixelator.filter(-1);
+        BufferedImage saturatedImage = pixelator.getImage();
+        //pixelator.filter(-2);
+        //BufferedImage contrastedImage = pixelator.getImage();
         BufferedImage blurImage = pixelator.filter(0);
         BufferedImage mosaicImage = pixelator.filter(1);
         BufferedImage linearDiffImage = pixelator.filter(2);
@@ -90,8 +101,10 @@ public class Pixelator {
         setText(gridDiffIcon, "<html>Grid-Difference<br>Filter</html>");
 
         container.add(originalIcon);
-//        container.add(blurIcon);
-//        container.add(mosaicIcon);
+        container.add(new JLabel(new ImageIcon(saturatedImage)));
+//        container.add(new JLabel(new ImageIcon(contrastedImage)));
+        container.add(blurIcon);
+        container.add(mosaicIcon);
         container.add(linearDiffIcon);
         container.add(linearDiff2Icon);
         container.add(linearDiff3Icon);

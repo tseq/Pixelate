@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * Pixel class. Enables calculation of RGB values.
+ * TODO: Consider using an extension of Java's Color class instead.
  */
 public class Pixel {
     private int argb;
@@ -26,6 +27,30 @@ public class Pixel {
         this.green = green;
         this.blue = blue;
         computeArgb();
+    }
+
+    /**
+     * Increase saturation of the current pixel.
+     *
+     * @param increase the increase (in times, eg. 1.5x, 2.0x) in saturation
+     */
+    public void increaseSaturation(float increase) {
+        argb = ColorMath.changeSaturation(new int[] {getRed(), getGreen(), getBlue()}, increase);
+        computeColors();
+    }
+
+    /**
+     * Increase contrast of current pixel.
+     *
+     * @param increase the increase in contrast (in val, from -128 to 128)
+     */
+    public void increaseContrast(int increase) {
+        if (increase > 128)
+            increase = 128;
+        if (increase < -128)
+            increase = -128;
+        argb = ColorMath.changeContrast(new int[]{getRed(), getGreen(), getBlue()}, increase);
+        computeColors();
     }
 
     /**
@@ -51,6 +76,16 @@ public class Pixel {
         int b = ((int) blue) & 0xFF;
 
         argb = (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
+    /**
+     * Compute and update the colors of the pixel.
+     */
+    public void computeColors() {
+        alpha = getAlpha();
+        red = getRed();
+        green = getGreen();
+        blue = getBlue();
     }
 
     /**

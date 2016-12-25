@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * Picture class. Holds the matrix of all the pixels and enables translation between pixel matrix and
@@ -144,10 +143,6 @@ public class Picture {
      * @return copy of Pixel matrix.
      */
     public Pixel[][] getPixels() {
-        Pixel[][] copy = new Pixel[getHeight()][];
-        for (int i = 0; i < copy.length; i++) {
-            copy[i] = Arrays.copyOf(pixels[i], pixels[i].length);
-        }
-        return copy;
+        return pixels;
     }
 }

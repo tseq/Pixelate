@@ -70,7 +70,10 @@ public class PictureFilter {
 
     /**
      * TODO: CLEAN THIS METHOD UP!
-     * @param picture
+     * Determines the color of the current pixel based on the color history of the traversed pixels, and its
+     * neighbors (depending on which case) by traversing the matrix in an out-in spiral motion.
+     *
+     * @param picture Picture to be transformed
      * @return
      */
     public static BufferedImage linearDifferenceFilter4(Picture picture) {
@@ -183,6 +186,13 @@ public class PictureFilter {
         return (new Picture(result)).getImage();
     }
 
+    /**
+     * Determines the color of the current pixel based on the color history of the traversed pixels, and the 3
+     * northern neighbors of the current pixel using nearest color method.
+     *
+     * @param picture Picture to be transformed
+     * @return transformed picture
+     */
     public static BufferedImage linearDifferenceFilter3(Picture picture) {
         int width = picture.getWidth();
         int height = picture.getHeight();
@@ -279,7 +289,7 @@ public class PictureFilter {
      * @param picture Picture to be transformed
      * @return transformed picture
      */
-    public static BufferedImage lienarDifferenceFilter(Picture picture) {
+    public static BufferedImage linearDifferenceFilter(Picture picture) {
         int width = picture.getWidth();
         int height = picture.getHeight();
 
@@ -387,5 +397,29 @@ public class PictureFilter {
         }
 
         return (new Picture(result)).getImage();
+    }
+
+    public static void increaseSaturation(Picture picture) {
+        int width = picture.getWidth();
+        int height = picture.getHeight();
+
+        Pixel[][] pixels = picture.getPixels();
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                pixels[i][j].increaseSaturation(1.5f);
+            }
+        }
+    }
+
+    public static void increaseContrast(Picture picture) {
+        int width = picture.getWidth();
+        int height = picture.getHeight();
+
+        Pixel[][] pixels = picture.getPixels();
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                pixels[i][j].increaseContrast(20);
+            }
+        }
     }
 }
