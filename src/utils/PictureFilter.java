@@ -321,6 +321,44 @@ public class PictureFilter {
     }
 
     /**
+     * Determine the color of the neighbor pixels in a 4x4 grid based on the color of the pixel at (1, 1).
+     *
+     * @param picture Picture to be transformed
+     * @return transformed picture
+     */
+    public static BufferedImage gridSpaceFilter2(Picture picture) {
+        int width = picture.getWidth();
+        int height = picture.getHeight();
+
+        Pixel[][] original = picture.getPixels();
+        Pixel[][] result = new Pixel[height][width];
+
+        // Iterate through pixel matrix
+        for (int i = 0; i < height; i += 4) {
+            for (int j = 0; j < width; j += 4) {
+
+                ArrayList<Pixel> colors = new ArrayList<>();
+                Pixel currentColor;
+                for (int x = Math.min(i + 1, height); x < Math.min(i + 3, height); x++) {
+                    for (int y = Math.min(j + 1, width); y < Math.min(j + 3, width); y++) {
+                        colors.add(original[x][y]);
+                        break;
+                    }
+                }
+                currentColor = colors.size() == 0 ? original[i][j] : colors.get(0);
+
+                // Paint the 4x4 grid
+                for (int x = i; x < Math.min(height, i + 4); x++) {
+                    for (int y = j; y < Math.min(width, j + 4); y++)
+                        result[x][y] = currentColor;
+                }
+            }
+        }
+
+        return (new Picture(result)).getImage();
+    }
+
+    /**
      * Determine the color of the neighbor pixels in a 4x4 grid based on the color of the top left pixel.
      *
      * @param picture Picture to be transformed
@@ -399,6 +437,11 @@ public class PictureFilter {
         return (new Picture(result)).getImage();
     }
 
+    /**
+     * Incrase saturation of picture.
+     *
+     * @param picture Picture to be transformed
+     */
     public static void increaseSaturation(Picture picture) {
         int width = picture.getWidth();
         int height = picture.getHeight();
@@ -411,6 +454,11 @@ public class PictureFilter {
         }
     }
 
+    /**
+     * Increase contrast of picture.
+     *
+     * @param picture Picture to transform
+     */
     public static void increaseContrast(Picture picture) {
         int width = picture.getWidth();
         int height = picture.getHeight();

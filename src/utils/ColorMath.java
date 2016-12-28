@@ -15,6 +15,18 @@ public class ColorMath {
         RGB, HSB
     }
 
+    public static int[] generateGradient(int[] rgb1, int[] rgb2, int steps) {
+        return null;
+    }
+
+    /**
+     * Change contrast of color.
+     * Reference: http://www.dfstudios.co.uk/articles/programming/image-programming-algorithms/
+     *
+     * @param rgb color to change
+     * @param contrast contrast value
+     * @return rgb value of contrasted color
+     */
     public static int changeContrast(int[] rgb, int contrast) {
         double factor = (259.0 * (contrast + 255)) / (255.0 * (259 - contrast));
         int newRed = (int) truncate((factor * rgb[0] - 128) + 128, ColorSpace.RGB);
@@ -28,7 +40,7 @@ public class ColorMath {
      *
      * @param rgb color to change
      * @param change change made to color
-     * @return rgb value of color
+     * @return rgb value of saturated color
      */
     public static int changeSaturation(int[] rgb, float change) {
         float[] hsb = Color.RGBtoHSB(rgb[0], rgb[1], rgb[2], null);

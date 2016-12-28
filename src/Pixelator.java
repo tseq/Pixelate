@@ -13,6 +13,7 @@ import java.io.IOException;
  */
 public class Pixelator {
     private static final String FOLDER = "unprocessed_pics/";
+    private static final String TEMP = "processed_pics/temp.jpg";
     private static final String RED_APPLE = FOLDER + "red_apple.jpg";
     private static final String GREEN_RED_APPLE = FOLDER + "green_red_apple.jpg";
     private static final String BLURRY_CAT = FOLDER + "blurry_cat.jpg";
@@ -42,14 +43,16 @@ public class Pixelator {
             case 1:
                 return PictureFilter.gridSpaceFilter(picture);
             case 2:
-                return PictureFilter.linearDifferenceFilter(picture);
+                return PictureFilter.gridSpaceFilter2(picture);
             case 3:
-                return PictureFilter.linearDifferenceFilter2(picture);
+                return PictureFilter.linearDifferenceFilter(picture);
             case 4:
-                return PictureFilter.linearDifferenceFilter3(picture);
+                return PictureFilter.linearDifferenceFilter2(picture);
             case 5:
-                return PictureFilter.linearDifferenceFilter4(picture);
+                return PictureFilter.linearDifferenceFilter3(picture);
             case 6:
+                return PictureFilter.linearDifferenceFilter4(picture);
+            case 7:
                 return PictureFilter.gridDifferenceFilter(picture);
             default:
                 return null;
@@ -63,6 +66,8 @@ public class Pixelator {
     public static void setText(JLabel label, String text) {
         label.setIconTextGap(-125);
         label.setText(text);
+//        label.setHorizontalTextPosition(JLabel.CENTER);
+//        label.setVerticalTextPosition(JLabel.CENTER);
     }
 
     public static void main(String[] args) throws IOException {
@@ -71,45 +76,54 @@ public class Pixelator {
         BufferedImage originalImage = pixelator.getImage();
         pixelator.filter(-1);
         BufferedImage saturatedImage = pixelator.getImage();
-        //pixelator.filter(-2);
-        //BufferedImage contrastedImage = pixelator.getImage();
-        BufferedImage blurImage = pixelator.filter(0);
-        BufferedImage mosaicImage = pixelator.filter(1);
-        BufferedImage linearDiffImage = pixelator.filter(2);
-        BufferedImage linearDiff2Image = pixelator.filter(3);
-        BufferedImage linearDiff3Image = pixelator.filter(4);
-        BufferedImage linearDiff4Image = pixelator.filter(5);
-        BufferedImage gridDiffImage = pixelator.filter(6);
+//        pixelator.filter(-2);
+//        BufferedImage contrastedImage = pixelator.getImage();
+//        BufferedImage blurImage = pixelator.filter(0);
+//        BufferedImage mosaicImage = pixelator.filter(1);
+//        BufferedImage linearDiffImage = pixelator.filter(3);
+//        BufferedImage linearDiff2Image = pixelator.filter(4);
+        BufferedImage linearDiff3Image = pixelator.filter(5);
+        BufferedImage linearDiff4Image = pixelator.filter(6);
+        BufferedImage gridDiffImage = pixelator.filter(7);
 
-        JPanel container = new JPanel(new GridLayout(2, 3));
+        save(linearDiff4Image);
+        Pixelator pixelator2 = new Pixelator(TEMP);
+        BufferedImage newImage = pixelator2.filter(7);
+
+        JPanel container = new JPanel(new GridLayout(3, 3));
 
         JLabel originalIcon = new JLabel(new ImageIcon(originalImage));
         setText(originalIcon, "Original Image");
-        JLabel blurIcon = new JLabel(new ImageIcon(blurImage));
-        setText(blurIcon, "Grid Weight Filter");
-        JLabel mosaicIcon = new JLabel(new ImageIcon(mosaicImage));
-        setText(mosaicIcon, "Grid Space Filter");
-        JLabel linearDiffIcon = new JLabel(new ImageIcon(linearDiffImage));
-        setText(linearDiffIcon, "<html>Linear Difference<br>Filter</html>");
-        JLabel linearDiff2Icon = new JLabel(new ImageIcon(linearDiff2Image));
-        setText(linearDiff2Icon, "<html>Linear Difference<br>Filter 2</html>");
-        JLabel linearDiff3Icon = new JLabel(new ImageIcon(linearDiff3Image));
-        setText(linearDiff3Icon, "<html>Linear Difference<br>Filter 3</html>");
+        JLabel saturatedIcon = new JLabel(new ImageIcon(saturatedImage));
+        setText(saturatedIcon, "Saturated Image");
+//        JLabel blurIcon = new JLabel(new ImageIcon(blurImage));
+//        setText(blurIcon, "Grid Weight Filter");
+//        JLabel mosaicIcon = new JLabel(new ImageIcon(mosaicImage));
+//        setText(mosaicIcon, "Grid Space Filter");
+//        JLabel linearDiffIcon = new JLabel(new ImageIcon(linearDiffImage));
+//        setText(linearDiffIcon, "<html>Linear Difference<br>Filter</html>");
+//        JLabel linearDiff2Icon = new JLabel(new ImageIcon(linearDiff2Image));
+//        setText(linearDiff2Icon, "<html>Linear Difference<br>Filter 2</html>");
+//        JLabel linearDiff3Icon = new JLabel(new ImageIcon(linearDiff3Image));
+//        setText(linearDiff3Icon, "<html>Linear Difference<br>Filter 3</html>");
         JLabel linearDiff4Icon = new JLabel(new ImageIcon(linearDiff4Image));
         setText(linearDiff4Icon, "<html>Linear Difference<br>Filter 4</html>");
         JLabel gridDiffIcon = new JLabel(new ImageIcon(gridDiffImage));
         setText(gridDiffIcon, "<html>Grid-Difference<br>Filter</html>");
+        JLabel newIcon = new JLabel(new ImageIcon(newImage));
+        setText(newIcon, "<html>Linear Difference 4 +<br>Grid-Difference<br>Filter</html>");
 
         container.add(originalIcon);
-        container.add(new JLabel(new ImageIcon(saturatedImage)));
+        container.add(saturatedIcon);
 //        container.add(new JLabel(new ImageIcon(contrastedImage)));
-        container.add(blurIcon);
-        container.add(mosaicIcon);
-        container.add(linearDiffIcon);
-        container.add(linearDiff2Icon);
-        container.add(linearDiff3Icon);
+//        container.add(blurIcon);
+//        container.add(mosaicIcon);
+//        container.add(linearDiffIcon);
+//        container.add(linearDiff2Icon);
+//        container.add(linearDiff3Icon);
         container.add(linearDiff4Icon);
         container.add(gridDiffIcon);
+//        container.add(newIcon);
 
         JFrame frame = new JFrame("Pixelator");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -120,7 +134,7 @@ public class Pixelator {
 
     public static void save(BufferedImage image) {
         try {
-            File outputfile = new File("processed_pics/temp.jpg");
+            File outputfile = new File(TEMP);
             ImageIO.write(image, "jpg", outputfile);
         } catch (IOException e) {
             e.printStackTrace();
