@@ -6,7 +6,7 @@ import java.awt.Color;
 
 /**
  * Gradient class. Create a Gradient object using the start and end colors, and get the array of colors that form a
- * gradient through interpolation.
+ * generateGradient through interpolation.
  */
 public class Gradient {
     public static final int DEFAULT_START_COLOR = 0xFF0000, DEFAULT_END_COLOR = 0x0000FF, DEFAULT_SHADES = 8;

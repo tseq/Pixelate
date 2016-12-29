@@ -10,6 +10,8 @@ import java.util.List;
  * TODO: Consider using an extension of Java's Color class instead.
  */
 public class Pixel {
+    private static final int GRADIENT_STEPS = 4;
+
     private int argb;
     private double red, green, blue, alpha;
 
@@ -27,6 +29,15 @@ public class Pixel {
         this.green = green;
         this.blue = blue;
         computeArgb();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param rgb rgb value of color
+     */
+    public Pixel(int rgb) {
+        setRGB(rgb);
     }
 
     /**
@@ -163,6 +174,25 @@ public class Pixel {
     }
 
     /**
+     * Get the RGB components for this Pixel.
+     *
+     * @return the RGB components in the exact order in an array
+     */
+    public int[] getRGBComponents() {
+        return new int[] {getRed(), getGreen(), getBlue()};
+    }
+
+    /**
+     * Set the RGB value for this pixel.
+     *
+     * @param rgb RGB value
+     */
+    public void setRGB(int rgb) {
+        argb = rgb;
+        computeColors();
+    }
+
+    /**
      * Compute the average values (color) of an array of pixels.
      *
      * @param pixels array of pixels to be averaged
@@ -213,5 +243,27 @@ public class Pixel {
     public static double colorDifferenceVal(Pixel p1, Pixel p2) {
         return ColorMath.colorDifferenceVal(new double[]{p1.getRed(), p1.getGreen(), p1.getBlue()},
                 new double[]{p2.getRed(), p2.getGreen(), p2.getBlue()});
+    }
+
+    /**
+     * Compute the generateGradient for 2 pixels.
+     *
+     * @param start start color
+     * @param end end color
+     * @return array of Pixels representing the generateGradient
+     */
+    public static Pixel[] generateGradient(Pixel start, Pixel end) {
+        int[] gradient =  ColorMath.generateGradient(start.getRGBComponents(), end.getRGBComponents(), GRADIENT_STEPS);
+        Pixel[] result = new Pixel[GRADIENT_STEPS];
+        for (int i = 0; i < gradient.length; i++)
+            result[i] = new Pixel(gradient[i]);
+        return result;
+    }
+
+    public static Pixel[] toPixels(int[] rgb) {
+        Pixel pixels[] = new Pixel[rgb.length];
+        for (int i = 0; i < rgb.length; i++)
+            pixels[i] = new Pixel(rgb[i]);
+        return pixels;
     }
 }

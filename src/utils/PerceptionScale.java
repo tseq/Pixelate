@@ -15,7 +15,7 @@ public enum PerceptionScale {
     private final double high;
 
     /**
-     * Constructor. Sets the bounds of the PerceptionScale object.
+     * Constructor. Sets the bounds of the PerceptionScale enum.
      *
      * @param low  lower bound
      * @param high upper bound

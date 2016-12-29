@@ -1,6 +1,6 @@
 package utils;
 
-import models.Palette;
+import paletteTest.Palette;
 import models.Picture;
 import models.Pixel;
 
@@ -183,6 +183,7 @@ public class PictureFilter {
 
         }
 
+        palette.condense();
         return (new Picture(result)).getImage();
     }
 

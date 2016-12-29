@@ -68,7 +68,7 @@ public class ColorRampView extends JFrame {
         JPanel panel = new JPanel(new FlowLayout());
         panel.setBorder(BorderFactory.createTitledBorder(COLOR_RAMP));
         Gradient gradient = new Gradient();
-        for (int colorVal : gradient.getGradientArray()) {
+        for (int colorVal : gradient.getGradientArray(4)) {
             Color color = new Color(colorVal);
             panel.add(getRampLabel(color));
         }

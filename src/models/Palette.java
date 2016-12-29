@@ -39,15 +39,6 @@ public class Palette {
     public boolean exists(Pixel color) {
         tempColor = nearestColor(color, palette);
         return tempColor != null;
-
-        /* Retired: This code picks the first color that is similar. */
-        /* for (Pixel p : palette) {
-            if (p.colorDifferenceScale(color).isSimilar()) {
-                tempColor = p;
-                return true;
-            }
-        }
-        return false; */
     }
 
     /**

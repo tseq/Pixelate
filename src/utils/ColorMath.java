@@ -15,15 +15,53 @@ public class ColorMath {
         RGB, HSB
     }
 
-    public static int[] generateGradient(int[] rgb1, int[] rgb2, int steps) {
-        return null;
+    public static double luminance(int[] rgb) {
+        return (0.2126 * rgb[0]) + (0.7152 * rgb[1]) + (0.0722 * rgb[2]);
+    }
+
+    /**
+     * Compute a steps generateGradient from startRGB to endRGB.
+     *
+     * @param startRGB start color in RGB
+     * @param endRGB end color in RGB
+     * @param steps number of generateGradient steps
+     * @return array of RGB values that represent the generateGradient
+     */
+    public static int[] generateGradient(int[] startRGB, int[] endRGB, int steps) {
+        float[] startHSB = Color.RGBtoHSB(startRGB[0], startRGB[1], startRGB[2], null);
+        float[] endHSB = Color.RGBtoHSB(endRGB[0], endRGB[1], endRGB[2], null);
+
+        int gradient[] = new int[steps];
+        for (int i = 0; i < steps; i++) {
+            float h = linearInterpolate(startHSB[0], endHSB[0], steps - 1, i);
+            float s = linearInterpolate(startHSB[1], endHSB[1], steps - 1, i);
+            float b = linearInterpolate(startHSB[2], endHSB[2], steps - 1, i);
+
+            gradient[i] = Color.HSBtoRGB(h, s, b);
+        }
+
+        return gradient;
+    }
+
+    /**
+     * Compute the linear interpolation from a start color to the end color.
+     *
+     * @param start start color's HSB component
+     * @param end end color's HSB component
+     * @param steps total number of steps required
+     * @param step current step to compute
+     * @return linear interpolation of the HSB component passed in
+     */
+    private static float linearInterpolate(float start, float end, int steps, int step) {
+        float p = (float) step / steps;
+        return (float) truncate((end * p) + (start * (1 - p)), ColorMath.ColorSpace.HSB);
     }
 
     /**
      * Change contrast of color.
      * Reference: http://www.dfstudios.co.uk/articles/programming/image-programming-algorithms/
      *
-     * @param rgb color to change
+     * @param rgb      color to change
      * @param contrast contrast value
      * @return rgb value of contrasted color
      */
@@ -31,14 +69,14 @@ public class ColorMath {
         double factor = (259.0 * (contrast + 255)) / (255.0 * (259 - contrast));
         int newRed = (int) truncate((factor * rgb[0] - 128) + 128, ColorSpace.RGB);
         int newGreen = (int) truncate((factor * rgb[1] - 128) + 128, ColorSpace.RGB);
-        int newBlue = (int) truncate((factor * rgb[2]  - 128) + 128, ColorSpace.RGB);
+        int newBlue = (int) truncate((factor * rgb[2] - 128) + 128, ColorSpace.RGB);
         return new Color(newRed, newGreen, newBlue).getRGB();
     }
 
     /**
      * Change saturation of the rgb color.
      *
-     * @param rgb color to change
+     * @param rgb    color to change
      * @param change change made to color
      * @return rgb value of saturated color
      */
@@ -50,13 +88,13 @@ public class ColorMath {
     /**
      * Truncate color space components.
      *
-     * @param component value of component
+     * @param component  value of component
      * @param colorSpace color space of component
      * @return truncated value
      */
     public static double truncate(double component, ColorSpace colorSpace) {
         int max, min = 0;
-        switch(colorSpace) {
+        switch (colorSpace) {
             case RGB:
                 max = 255;
                 break;
