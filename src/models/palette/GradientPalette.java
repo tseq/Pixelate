@@ -1,4 +1,4 @@
-package paletteTest;
+package models.palette;
 
 import models.Pixel;
 import utils.ColorMath;
@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Palette class. Mimics a real life palette by holding various colors (Pixel objects).
+ * Gradient palette. Creates the palette using color interpolation for each hue.
  */
-public class Palette {
+public class GradientPalette {
     private static final int STEPS = 16;
 
     private static Pixel hues[];
@@ -57,7 +57,7 @@ public class Palette {
     /**
      * Constructor. Initializes instant variables.
      */
-    public Palette() {
+    public GradientPalette() {
         tempColor = null;
         initMap();
     }
@@ -99,7 +99,7 @@ public class Palette {
      * Condense the palette by reducing each ramp to 4 colors.
      */
     public void condense() {
-        for(Map.Entry<Pixel, ColorRamp> entry: palette.entrySet())
+        for (Map.Entry<Pixel, ColorRamp> entry : palette.entrySet())
             entry.getValue().condense();
     }
 
@@ -175,7 +175,7 @@ public class Palette {
      * Obtain the nearest color in an array of colors.
      *
      * @param currentColor color benchmark
-     * @param colors array list of colors to be compared with the benchmark
+     * @param colors       array list of colors to be compared with the benchmark
      * @return the nearest color if it exists, null if the nearest color is not similar to the current color
      */
     public static Pixel nearestColor(Pixel currentColor, List<Pixel> colors) {
@@ -249,7 +249,8 @@ public class Palette {
 
         /**
          * Get the darkest color in the ramp. The darkest color is the one with the lowest luminance.
-         * @return
+         *
+         * @return darkest color
          */
         private Pixel getDarkestColor() {
             double min = ColorMath.luminance(ramp.get(0).getRGBComponents());

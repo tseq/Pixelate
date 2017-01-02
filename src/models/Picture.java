@@ -1,8 +1,12 @@
 package models;
 
+import org.imgscalr.Scalr;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.IOException;
 
@@ -33,6 +37,18 @@ public class Picture {
         this.pixels = pixels;
     }
 
+    /**
+     * Downsample an image.
+     *
+     * @return downsampled image
+     */
+    public Pixel[][] downsample() {
+        BufferedImage image = getImage();
+        BufferedImage scaledImage = Scalr.resize(image, image.getWidth() / 10,
+                image.getHeight() / 10);
+        return convertToPixelMatrix(scaledImage);
+    }
+
     // HELPER METHODS
 
     /**
@@ -43,7 +59,7 @@ public class Picture {
     private void parseImg(String imgSrc) {
         try {
             BufferedImage image = ImageIO.read(new File(imgSrc));
-            pixels = convertToRGBMatrix(image);
+            pixels = convertToPixelMatrix(image);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -53,20 +69,25 @@ public class Picture {
      * Algorithm to convert image to RGB matrix.
      * Source: http://stackoverflow.com/questions/6524196/java-get-pixel-array-from-image
      *
-     * @param image BufferedImage to be converted into RGB matrix
      * @return Pixel matrix with RGB value
      */
-    private Pixel[][] convertToRGBMatrix(BufferedImage image) {
-        final byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+    private Pixel[][] convertToPixelMatrix(BufferedImage image) {
         final int width = image.getWidth();
         final int height = image.getHeight();
-        boolean hasAlphaChannel = image.getAlphaRaster() != null;
+        DataBuffer buffer = image.getRaster().getDataBuffer();
 
-        return getPixelMatrix(hasAlphaChannel, data, width, height);
+        if (buffer.getDataType() == DataBuffer.TYPE_BYTE) {
+            final byte[] data = ((DataBufferByte) buffer).getData();
+            boolean hasAlphaChannel = image.getAlphaRaster() != null;
+            return getPixelMatrix(hasAlphaChannel, data, width, height);
+        } else {
+            final int[] data = ((DataBufferInt) buffer).getData();
+            return getPixelMatrix(data, width, height);
+        }
     }
 
     /**
-     * Helper method to convert image to RGB matrix.
+     * Helper method to convert image to RGB matrix given data is of type byte.
      *
      * @param hasAlpha  true if image has alpha channel, false otherwise
      * @param data      the byte array of the image
@@ -84,6 +105,28 @@ public class Picture {
             } else {
                 result[row][col] = new Pixel(-16777216, data[pixelNum + 2], data[pixelNum + 1], data[pixelNum]);
             }
+            col++;
+            if (col == imgWidth) {
+                col = 0;
+                row++;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Helper method to convert image to RGB matrix given data is of type int.
+     *
+     * @param data      the int array of the image
+     * @param imgWidth  the width of the image
+     * @param imgHeight the height of the image
+     * @return the Pixel matrix of the image
+     */
+    private Pixel[][] getPixelMatrix(int[] data, int imgWidth, int imgHeight) {
+        Pixel result[][] = new Pixel[imgHeight][imgWidth];
+
+        for (int pixelNum = 0, row = 0, col = 0; pixelNum < data.length; pixelNum++) {
+            result[row][col] = new Pixel(data[pixelNum]);
             col++;
             if (col == imgWidth) {
                 col = 0;

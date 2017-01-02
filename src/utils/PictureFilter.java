@@ -1,6 +1,7 @@
 package utils;
 
-import paletteTest.Palette;
+import models.palette.KMeansPalette;
+import models.palette.Palette;
 import models.Picture;
 import models.Pixel;
 
@@ -183,7 +184,6 @@ public class PictureFilter {
 
         }
 
-        palette.condense();
         return (new Picture(result)).getImage();
     }
 
@@ -365,6 +365,32 @@ public class PictureFilter {
      * @param picture Picture to be transformed
      * @return transformed picture
      */
+    public static BufferedImage gridSpaceFilter3(Picture picture, int numColors) {
+        int width = picture.getWidth();
+        int height = picture.getHeight();
+
+        Pixel[][] original = picture.getPixels();
+        Pixel[][] downsample = picture.downsample();
+        KMeansPalette palette = new KMeansPalette(downsample, numColors);
+
+        Pixel[][] result = new Pixel[height][width];
+        // Iterate through pixel matrix
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                Pixel nearestColor = palette.nearestColor(original[i][j]);
+                result[i][j] = nearestColor;
+            }
+        }
+
+        return (new Picture(result)).getImage();
+    }
+
+    /**
+     * Determine the color of the neighbor pixels in a 4x4 grid based on the color of the top left pixel.
+     *
+     * @param picture Picture to be transformed
+     * @return transformed picture
+     */
     public static BufferedImage gridSpaceFilter(Picture picture) {
         int width = picture.getWidth();
         int height = picture.getHeight();
@@ -439,7 +465,7 @@ public class PictureFilter {
     }
 
     /**
-     * Incrase saturation of picture.
+     * Increase saturation of picture.
      *
      * @param picture Picture to be transformed
      */

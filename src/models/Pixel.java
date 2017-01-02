@@ -31,6 +31,13 @@ public class Pixel {
         computeArgb();
     }
 
+    public Pixel(double[] rgb) {
+        this.red = (int) rgb[0];
+        this.green = (int) rgb[1];
+        this.blue = (int) rgb[2];
+        computeArgb();
+    }
+
     /**
      * Constructor.
      *
@@ -260,6 +267,12 @@ public class Pixel {
         return result;
     }
 
+    /**
+     * Convert RGB array to Pixel array.
+     *
+     * @param rgb RGB array
+     * @return Pixel array that represents the RGB array
+     */
     public static Pixel[] toPixels(int[] rgb) {
         Pixel pixels[] = new Pixel[rgb.length];
         for (int i = 0; i < rgb.length; i++)

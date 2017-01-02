@@ -1,12 +1,13 @@
-package models;
+package models.palette;
 
+import models.Pixel;
 import utils.ColorMath;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Palette class. Mimics a real life palette by holding various colors (Pixel objects).
+ * Naive palette. Mimics a real life palette by holding various colors (Pixel objects).
  */
 public class Palette {
     private ArrayList<Pixel> palette;
