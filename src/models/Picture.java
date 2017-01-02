@@ -19,7 +19,7 @@ public class Picture {
     private String imgSrc;
 
     /**
-     * Constructor.
+     * Constructor. Accept image path as argument.
      *
      * @param imgSrc path of image to be parsed
      */
@@ -29,7 +29,7 @@ public class Picture {
     }
 
     /**
-     * Constructor.
+     * Constructor. Accept Pixel[][] matrix as argument.
      *
      * @param pixels pixel matrix to be parsed
      */
@@ -38,14 +38,33 @@ public class Picture {
     }
 
     /**
-     * Downsample an image.
+     * Constructor. Accept BufferedImage as argument.
+     *
+     * @param image BufferedImage to be parsed.
+     */
+    public Picture(BufferedImage image) {
+        pixels = convertToPixelMatrix(image);
+    }
+
+    /**
+     * Downsample an image. Uses the imgscalr lib from:
+     * https://github.com/rkalla/imgscalr
      *
      * @return downsampled image
      */
     public Pixel[][] downsample() {
         BufferedImage image = getImage();
-        BufferedImage scaledImage = Scalr.resize(image, image.getWidth() / 10,
-                image.getHeight() / 10);
+        int width = image.getWidth();
+        int height = image.getHeight();
+        double ratio;
+
+        if (width >= height) {
+            ratio = 50.0 / width;
+        } else {
+            ratio = 50.0 / height;
+        }
+
+        BufferedImage scaledImage = Scalr.resize(image, (int) (width * ratio), (int) (height * ratio));
         return convertToPixelMatrix(scaledImage);
     }
 
@@ -103,7 +122,7 @@ public class Picture {
             if (hasAlpha) {
                 result[row][col] = new Pixel(data[pixelNum], data[pixelNum + 3], data[pixelNum + 2], data[pixelNum + 1]);
             } else {
-                result[row][col] = new Pixel(-16777216, data[pixelNum + 2], data[pixelNum + 1], data[pixelNum]);
+                result[row][col] = new Pixel(Pixel.MAX_ALPHA, data[pixelNum + 2], data[pixelNum + 1], data[pixelNum]);
             }
             col++;
             if (col == imgWidth) {
@@ -154,11 +173,9 @@ public class Picture {
      */
     public BufferedImage getImage() {
         BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-        for (int i = 0; i < pixels.length; i++) {
-            for (int j = 0; j < pixels[0].length; j++) {
+        for (int i = 0; i < pixels.length; i++)
+            for (int j = 0; j < pixels[0].length; j++)
                 image.setRGB(j, i, pixels[i][j].getRGB());
-            }
-        }
         return image;
     }
 

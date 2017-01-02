@@ -15,6 +15,10 @@ public class ColorMath {
         RGB, HSB
     }
 
+    public enum Mode {
+        CIEDE2000, CIE76, CIE94
+    }
+
     public static double luminance(int[] rgb) {
         return (0.2126 * rgb[0]) + (0.7152 * rgb[1]) + (0.0722 * rgb[2]);
     }
@@ -166,6 +170,26 @@ public class ColorMath {
     }
 
     /**
+     * Compute color differences in terms of double.
+     *
+     * @param rgb1 first color
+     * @param rgb2 second color
+     * @return difference between first and second color
+     */
+    public static double colorDifferenceVal(double[] rgb1, double[] rgb2, Mode mode) {
+        switch (mode) {
+            case CIE76:
+                return cie76(rgb1, rgb2);
+            case CIE94:
+                return cie94(rgb1, rgb2);
+            case CIEDE2000:
+                return ciede2000(rgb1, rgb2);
+            default:
+                return cie76(rgb1, rgb2);
+        }
+    }
+
+    /**
      * CIE76 Color difference formula implementation.
      *
      * @param rgb1 first color
@@ -188,7 +212,7 @@ public class ColorMath {
      *
      * @param rgb1 first color
      * @param rgb2 second color
-     * @return diffence between rgb1 and rgb2, delta E94
+     * @return difference between rgb1 and rgb2, delta E94
      */
     public static double cie94(double[] rgb1, double[] rgb2) {
         double[] lab1 = rgbToLab(rgb1), lab2 = rgbToLab(rgb2);

@@ -1,4 +1,5 @@
 import models.Picture;
+import utils.PictureDraw;
 import utils.PictureFilter;
 
 import javax.imageio.ImageIO;
@@ -15,6 +16,7 @@ public class Pixelator {
     private static final String FOLDER = "unprocessed_pics/";
     private static final String TEMP = "processed_pics/temp.jpg";
     private static final String RED_APPLE = FOLDER + "red_apple.jpg";
+    private static final String RED_APPLE_BINARY = FOLDER + "red_apple_binary.png";
     private static final String GREEN_RED_APPLE = FOLDER + "green_red_apple.jpg";
     private static final String BLURRY_CAT = FOLDER + "blurry_cat.jpg";
     private static final String TINY_CAT = FOLDER + "tiny_cat.jpg";
@@ -49,7 +51,7 @@ public class Pixelator {
             case 2:
                 return PictureFilter.gridSpaceFilter2(picture);
             case 3:
-                return PictureFilter.gridSpaceFilter3(picture, 64);
+                return PictureFilter.colorQuantization(picture, 16);
             case 4:
                 return PictureFilter.linearDifferenceFilter(picture);
             case 5:
@@ -75,16 +77,33 @@ public class Pixelator {
     }
 
     public static void main(String[] args) throws IOException {
-        Pixelator pixelator = new Pixelator(LENA);
+        filterAction();
+        //edgeDetection();
+    }
+
+    public static void edgeDetection() {
+        Pixelator pixelator = new Pixelator(RED_APPLE_BINARY);
+        BufferedImage originalImage = pixelator.getImage();
+        BufferedImage edgeImage = PictureDraw.detectEdge(pixelator.picture);
+
+        JPanel container = new JPanel(new GridLayout(2, 2));
+
+        JLabel originalLabel = new JLabel(new ImageIcon(originalImage));
+        JLabel edgeLabel = new JLabel(new ImageIcon(edgeImage));
+
+        container.add(originalLabel);
+        container.add(edgeLabel);
+
+        show(container);
+    }
+
+    public static void filterAction() {
+        Pixelator pixelator = new Pixelator(RED_APPLE);
 
         BufferedImage originalImage = pixelator.getImage();
         pixelator.filter(-1);
         BufferedImage saturatedImage = pixelator.getImage();
-
-        long startTime = System.currentTimeMillis();
         BufferedImage colorImage64 = pixelator.filter(3);
-        long endTime = System.currentTimeMillis();
-        System.out.println((endTime - startTime) + " milliseconds");
 
         JPanel container = new JPanel(new GridLayout(2, 2));
 

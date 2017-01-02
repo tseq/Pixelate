@@ -365,32 +365,6 @@ public class PictureFilter {
      * @param picture Picture to be transformed
      * @return transformed picture
      */
-    public static BufferedImage gridSpaceFilter3(Picture picture, int numColors) {
-        int width = picture.getWidth();
-        int height = picture.getHeight();
-
-        Pixel[][] original = picture.getPixels();
-        Pixel[][] downsample = picture.downsample();
-        KMeansPalette palette = new KMeansPalette(downsample, numColors);
-
-        Pixel[][] result = new Pixel[height][width];
-        // Iterate through pixel matrix
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                Pixel nearestColor = palette.nearestColor(original[i][j]);
-                result[i][j] = nearestColor;
-            }
-        }
-
-        return (new Picture(result)).getImage();
-    }
-
-    /**
-     * Determine the color of the neighbor pixels in a 4x4 grid based on the color of the top left pixel.
-     *
-     * @param picture Picture to be transformed
-     * @return transformed picture
-     */
     public static BufferedImage gridSpaceFilter(Picture picture) {
         int width = picture.getWidth();
         int height = picture.getHeight();
@@ -461,6 +435,38 @@ public class PictureFilter {
             }
         }
 
+        return (new Picture(result)).getImage();
+    }
+
+    /**
+     * Determine the color of the neighbor pixels in a 4x4 grid based on the color of the top left pixel.
+     *
+     * @param picture Picture to be transformed
+     * @return transformed picture
+     */
+    public static BufferedImage colorQuantization(Picture picture, int numColors) {
+        int width = picture.getWidth();
+        int height = picture.getHeight();
+
+        Pixel[][] original = picture.getPixels();
+        Pixel[][] downsample = picture.downsample();
+        KMeansPalette palette = new KMeansPalette(downsample, numColors);
+
+        Pixel[][] result = new Pixel[height][width];
+        // Iterate through pixel matrix
+        for (int i = 0; i < height; i++)
+            for (int j = 0; j < width; j++)
+                result[i][j] = palette.nearestColor(original[i][j]);
+
+        // Smooth the colors
+        numColors = 5;
+        palette.condense(numColors);// Further decrease palette size.
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                result[i][j] = palette.nearestColor(result[i][j]);
+            }
+        }
         return (new Picture(result)).getImage();
     }
 

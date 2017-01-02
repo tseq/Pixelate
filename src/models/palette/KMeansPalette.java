@@ -27,13 +27,27 @@ public class KMeansPalette {
      * Initialize the palette through K-means color quantization.
      */
     private void initPalette() {
-        KMeansPlusPlusClusterer<PixelClusterable> clusterer = new KMeansPlusPlusClusterer<>(paletteSize, 80, new
+        KMeansPlusPlusClusterer<PixelClusterable> clusterer = new KMeansPlusPlusClusterer<>(paletteSize, 200, new
                 LabDistanceMeasure());
         System.out.println("clustering...");
         System.out.println(PixelClusterable.toClusterable(image).size());
         List<CentroidCluster<PixelClusterable>> centroidClusters = clusterer.cluster(PixelClusterable.toClusterable
                 (image));
         System.out.println("clustering complete");
+        palette = PixelClusterable.toPixel(centroidClusters);
+    }
+
+    /**
+     * Consense the palette by decreasing the palette size to the newly specified paletteSize.
+     *
+     * @param paletteSize new palette size
+     */
+    public void condense(int paletteSize) {
+        this.paletteSize = paletteSize;
+        KMeansPlusPlusClusterer<PixelClusterable> clusterer = new KMeansPlusPlusClusterer<>(paletteSize, 500, new
+                LabDistanceMeasure());
+        List<CentroidCluster<PixelClusterable>> centroidClusters = clusterer.cluster(PixelClusterable.toClusterable
+                (palette));
         palette = PixelClusterable.toPixel(centroidClusters);
     }
 

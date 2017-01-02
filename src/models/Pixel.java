@@ -10,6 +10,8 @@ import java.util.List;
  * TODO: Consider using an extension of Java's Color class instead.
  */
 public class Pixel {
+    public static final int MAX_ALPHA = -16777216;
+
     private static final int GRADIENT_STEPS = 4;
 
     private int argb;
@@ -119,12 +121,31 @@ public class Pixel {
     /**
      * Compute the difference between the current pixel and another pixel in value.
      *
-     * @param p pixel to be copared with
+     * @param p pixel to be compared with
      * @return value of the difference
      */
     public double colorDifferenceVal(Pixel p) {
         return colorDifferenceVal(this, p);
     }
+
+    /**
+     * Compute the difference between the current pixel and another pixel in value, where the formula used is
+     * specified by mode.
+     *
+     * @param p pixel to be compared with
+     * @param mode the color distance formula to use
+     * @return value of the difference
+     */
+    public double colorDifferenceVal(Pixel p, ColorMath.Mode mode) {
+        return colorDifferenceVal(this, p, mode);
+    }
+
+    /**
+     * Compute luminance of this pixel.
+     *
+     * @return luminosity of the pixel
+     */
+    public double luminance() { return ColorMath.luminance(getRGBComponents()); }
 
     /**
      * Compute rgb value of the pixel.
@@ -250,6 +271,19 @@ public class Pixel {
     public static double colorDifferenceVal(Pixel p1, Pixel p2) {
         return ColorMath.colorDifferenceVal(new double[]{p1.getRed(), p1.getGreen(), p1.getBlue()},
                 new double[]{p2.getRed(), p2.getGreen(), p2.getBlue()});
+    }
+
+    /**
+     * Compute color difference between 2 pixels in value, where the formula used is specified by mode.
+     *
+     * @param p1 first pixel
+     * @param p2 second pixel
+     * @param mode the color distance formula to use
+     * @return value of the difference between the two pixels.
+     */
+    public static double colorDifferenceVal(Pixel p1, Pixel p2, ColorMath.Mode mode) {
+        return ColorMath.colorDifferenceVal(new double[]{p1.getRed(), p1.getGreen(), p1.getBlue()},
+                new double[]{p2.getRed(), p2.getGreen(), p2.getBlue()}, mode);
     }
 
     /**
